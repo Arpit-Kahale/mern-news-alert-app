@@ -31,10 +31,9 @@ const userRoutes =
 const newsRoutes =
   require("./routes/newsRoutes");
 
+// FIXED ROUTE IMPORT
 const notificationRoutes =
-  require(
-    "./routes/notifications.routes"
-  );
+  require("./routes/notificationRoutes");
 
 // API ROUTES
 app.use("/api/auth", authRoutes);
