@@ -26,9 +26,14 @@ const updatePreferences = async (req, res) => {
 
   try {
 
-    const { preferences } = req.body;
+    const {
+      preferences,
+      alertFrequency,
+    } = req.body;
 
-    const user = await User.findById(req.user.id);
+    const user = await User.findById(
+      req.user.id
+    );
 
     if (!user) {
 
@@ -40,11 +45,19 @@ const updatePreferences = async (req, res) => {
 
     user.preferences = preferences;
 
+    user.alertFrequency =
+      alertFrequency;
+
     await user.save();
 
     res.json({
-      message: "Preferences Updated Successfully",
+      message:
+        "Preferences Updated Successfully",
+
       preferences: user.preferences,
+
+      alertFrequency:
+        user.alertFrequency,
     });
 
   } catch (error) {

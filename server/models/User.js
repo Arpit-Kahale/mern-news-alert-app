@@ -23,6 +23,12 @@ const userSchema = new mongoose.Schema({
     default: [],
   },
 
+  alertFrequency: {
+    type: String,
+    default: "Daily",
+  },
+
 });
 
-module.exports = mongoose.model("User", userSchema);
+module.exports =
+  mongoose.model("User", userSchema);

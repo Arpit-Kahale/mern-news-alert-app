@@ -1,59 +1,77 @@
 import { useEffect, useState } from "react";
+
 import { useNavigate } from "react-router-dom";
+
 import API from "../services/api";
 
 export default function Preferences() {
 
   const navigate = useNavigate();
 
-  const [selected, setSelected] = useState([]);
+  const [selected, setSelected] =
+    useState([]);
 
+  const [alertFrequency,
+    setAlertFrequency] =
+    useState("Daily");
+
+  // CLEAN PROFESSIONAL CATEGORIES
   const categories = [
     "technology",
-    "ai",
     "sports",
     "business",
     "politics",
-    "crime",
     "health",
     "finance",
     "entertainment",
-    "gaming",
     "science",
-    "space",
-    "cryptocurrency",
-    "cybersecurity",
     "world",
     "india",
-    "startups",
-    "coding",
-    "social media",
-    "climate",
   ];
 
   // FETCH USER PREFERENCES
   useEffect(() => {
 
-    const fetchPreferences = async () => {
+    const fetchPreferences =
+      async () => {
 
       try {
 
-        const token = localStorage.getItem("token");
+        const token =
+          localStorage.getItem(
+            "token"
+          );
 
-        const res = await API.get(
-          "/user/profile",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const res =
+          await API.get(
+            "/user/profile",
+            {
+              headers: {
+                Authorization:
+                  `Bearer ${token}`,
+              },
+            }
+          );
 
         console.log(res.data);
 
-        if (res.data.preferences) {
+        if (
+          res.data.preferences
+        ) {
 
-          setSelected(res.data.preferences);
+          setSelected(
+            res.data.preferences
+          );
+
+        }
+
+        if (
+          res.data.alertFrequency
+        ) {
+
+          setAlertFrequency(
+            res.data.alertFrequency
+          );
 
         }
 
@@ -69,13 +87,18 @@ export default function Preferences() {
   }, []);
 
   // TOGGLE CATEGORY
-  const toggleCategory = (category) => {
+  const toggleCategory = (
+    category
+  ) => {
 
-    if (selected.includes(category)) {
+    if (
+      selected.includes(category)
+    ) {
 
       setSelected(
         selected.filter(
-          (item) => item !== category
+          (item) =>
+            item !== category
         )
       );
 
@@ -90,29 +113,38 @@ export default function Preferences() {
   };
 
   // SAVE PREFERENCES
-  const savePreferences = async () => {
+  const savePreferences =
+    async () => {
 
     try {
 
-      const token = localStorage.getItem("token");
+      const token =
+        localStorage.getItem(
+          "token"
+        );
 
-      console.log(selected);
+      const res =
+        await API.put(
+          "/user/preferences",
+          {
+            preferences:
+              selected,
 
-      const res = await API.put(
-        "/user/preferences",
-        {
-          preferences: selected,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
+            alertFrequency,
           },
-        }
-      );
+          {
+            headers: {
+              Authorization:
+                `Bearer ${token}`,
+            },
+          }
+        );
 
       console.log(res.data);
 
-      alert("Preferences Updated Successfully");
+      alert(
+        "Preferences Updated Successfully"
+      );
 
       navigate("/profile");
 
@@ -120,7 +152,34 @@ export default function Preferences() {
 
       console.log(err);
 
-      alert("Failed To Update Preferences");
+      alert(
+        "Failed To Update Preferences"
+      );
+
+    }
+  };
+
+  // TEST EMAIL
+  const sendTestEmail =
+    async () => {
+
+    try {
+
+      await API.post(
+        "/notifications/test-email"
+      );
+
+      alert(
+        "Test Email Sent Successfully 🚀"
+      );
+
+    } catch (err) {
+
+      console.log(err);
+
+      alert(
+        "Failed To Send Test Email"
+      );
 
     }
   };
@@ -145,7 +204,9 @@ export default function Preferences() {
         </div>
 
         <button
-          onClick={() => navigate("/dashboard")}
+          onClick={() =>
+            navigate("/dashboard")
+          }
           className="bg-white text-black px-5 py-2 rounded-full font-semibold hover:bg-gray-200 transition"
         >
           Back
@@ -164,72 +225,147 @@ export default function Preferences() {
           </h2>
 
           <p className="text-gray-500 mt-4 text-lg">
-            Select categories to receive personalized news updates and alerts.
+            Select categories to
+            receive personalized
+            news updates and
+            alerts.
           </p>
+
+        </div>
+
+        {/* ALERT FREQUENCY */}
+        <div className="mb-10">
+
+          <label className="block text-lg font-semibold mb-3">
+
+            Alert Frequency
+
+          </label>
+
+          <select
+            value={alertFrequency}
+            onChange={(e) =>
+              setAlertFrequency(
+                e.target.value
+              )
+            }
+            className="w-full md:w-80 p-4 rounded-2xl border border-gray-300 shadow-md outline-none"
+          >
+
+            <option>
+              Immediate
+            </option>
+
+            <option>
+              Hourly
+            </option>
+
+            <option>
+              Daily
+            </option>
+
+          </select>
 
         </div>
 
         {/* CATEGORY GRID */}
         <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
 
-          {categories.map((category, index) => (
+          {categories.map(
+            (
+              category,
+              index
+            ) => (
 
-            <div
-              key={index}
-              onClick={() => toggleCategory(category)}
-              className={`cursor-pointer rounded-3xl p-6 shadow-lg transition-all duration-300 border-2 hover:scale-105 ${
-                selected.includes(category)
-                  ? "bg-black text-white border-black"
-                  : "bg-white border-gray-200 hover:border-black"
-              }`}
-            >
+              <div
+                key={index}
 
-              <div className="flex justify-between items-center">
+                onClick={() =>
+                  toggleCategory(
+                    category
+                  )
+                }
 
-                <h3 className="text-lg font-bold capitalize">
-                  {category}
-                </h3>
+                className={`cursor-pointer rounded-3xl p-6 shadow-lg transition-all duration-300 border-2 hover:scale-105 ${
+                  selected.includes(
+                    category
+                  )
+                    ? "bg-black text-white border-black"
+                    : "bg-white border-gray-200 hover:border-black"
+                }`}
+              >
 
-                <div
-                  className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
-                    selected.includes(category)
-                      ? "bg-white border-white"
-                      : "border-gray-400"
-                  }`}
-                >
+                <div className="flex justify-between items-center">
 
-                  {selected.includes(category) && (
+                  <h3 className="text-lg font-bold capitalize">
 
-                    <div className="w-3 h-3 bg-black rounded-full"></div>
+                    {category}
 
-                  )}
+                  </h3>
+
+                  <div
+                    className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
+                      selected.includes(
+                        category
+                      )
+                        ? "bg-white border-white"
+                        : "border-gray-400"
+                    }`}
+                  >
+
+                    {selected.includes(
+                      category
+                    ) && (
+
+                      <div className="w-3 h-3 bg-black rounded-full"></div>
+
+                    )}
+
+                  </div>
 
                 </div>
 
+                <p className={`mt-3 text-sm ${
+                  selected.includes(
+                    category
+                  )
+                    ? "text-gray-300"
+                    : "text-gray-500"
+                }`}>
+
+                  Personalized updates
+                  related to {
+                    category
+                  }.
+
+                </p>
+
               </div>
 
-              <p className={`mt-3 text-sm ${
-                selected.includes(category)
-                  ? "text-gray-300"
-                  : "text-gray-500"
-              }`}>
-                Personalized updates related to {category}.
-              </p>
-
-            </div>
-
-          ))}
+            )
+          )}
 
         </div>
 
-        {/* SAVE BUTTON */}
-        <div className="flex justify-center mt-14">
+        {/* BUTTONS */}
+        <div className="flex flex-wrap justify-center gap-5 mt-14">
 
           <button
             onClick={savePreferences}
             className="bg-black hover:bg-gray-900 transition text-white px-10 py-4 rounded-2xl text-lg font-semibold shadow-xl"
           >
+
             Save Preferences
+
+          </button>
+
+          <button
+            onClick={sendTestEmail}
+            className="bg-blue-600 hover:bg-blue-700 transition text-white px-10 py-4 rounded-2xl text-lg font-semibold shadow-xl"
+          >
+
+            Send Test Email
+
           </button>
 
         </div>
